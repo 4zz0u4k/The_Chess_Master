@@ -1,20 +1,54 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const Board());
-}
+void main() => runApp(MaterialApp(
+  home: ChessBoard(),
+));
 
-class Board extends StatefulWidget {
-  const Board({super.key});
-
+class ChessBoard extends StatefulWidget {
   @override
-  State<Board> createState() => _BoardState();
-}
+  _ChessBoardState createState() => _ChessBoardState();
 
-class _BoardState extends State<Board> {
+}
+class _ChessBoardState extends State<ChessBoard> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    double screenWidth = MediaQuery.of(context).size.width;
+    double gridCellSize = screenWidth / 8;
+
+    return Scaffold(
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 8,
+          childAspectRatio: 1.0, // Makes sure the cells are square
+        ),
+        itemCount: 64,
+        itemBuilder: (context, index) {
+          return Center(
+            child: GestureDetector(
+              onTap: () {
+                print('$index');
+              },
+              child: Container(
+                width: gridCellSize,
+                height: gridCellSize,
+                color: (((index ~/ 8 ) % 2) == 0 ) ? ((index % 2 == 0) ? Colors.yellow[100] : Colors.green ) : ((index % 2 != 0) ? Colors.yellow[100] : Colors.green ),
+                child: Center(
+                  child: Text(
+                    '$index',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
+
+
+
+
+
 
