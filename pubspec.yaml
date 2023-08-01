@@ -21,7 +21,18 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-
-  uses-material-design: true
+  assets:
+    - assets/BlackKing.png
+    - assets/BlackKnight.png
+    - assets/BlackBishop.png
+    - assets/BlackQueen.png
+    - assets/BlackPawn.png
+    - assets/BlackRook.png
+    - assets/WhiteKing.png
+    - assets/WhiteKnight.png
+    - assets/WhiteBishop.png
+    - assets/WhiteQueen.png
+    - assets/WhiteRook.png
+    - assets/WhitePawn.png
 
 
