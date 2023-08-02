@@ -13,6 +13,7 @@ class ChessBoard extends StatefulWidget {
 }
 class _ChessBoardState extends State<ChessBoard> {
   List HighLightPosition = [];
+  bool isOnSelection = false;
   chess.Chess position = chess.Chess.fromFEN('r6r/1pNk1ppp/2np4/b3p3/4P1b1/N1Q5/P4PPP/R3KB1R w KQ - 3 18');
   String AlphCars = "abcdefgh";
   String NumCars = "012345678";
@@ -38,24 +39,36 @@ class _ChessBoardState extends State<ChessBoard> {
                 }else{
                   TappedPosition = AlphCars[index % 8]+NumCars[8-((index ~/ 8))];
                 }
-                if(position.get(TappedPosition) != null){
-                  if(position.get(TappedPosition)?.color == position.turn){
-                    Map options = {'asObjects': true};
-                    List Positions =  position.moves(options).where((move) => move.from == chess.Chess.SQUARES[TappedPosition]!).toList();
-                    setState(() {
-                      HighLightPosition = Positions;
-                      print(HighLightPosition);
-                    });
-                  }else{
+                if(!isOnSelection){
+                  if(position.get(TappedPosition) != null){
+                    if(position.get(TappedPosition)?.color == position.turn){
+                      Map options = {'asObjects': true};
+                      List Positions =  position.moves(options).where((move) => move.from == chess.Chess.SQUARES[TappedPosition]!).toList();
+                      isOnSelection = true;
+                      setState(() {
+                        HighLightPosition = Positions;
+                        print(HighLightPosition);
+                      });
+                    }
+                  }
+                }else{ //About to select a Square or just leave the choices
+                  for(chess.Move move in HighLightPosition){
+                    if(move.toAlgebraic == TappedPosition){
+                      //Move the piece
+                      position.move(move);
+                      setState(() {
+                        HighLightPosition = [];
+                      });
+                    }
+                  }
+                  isOnSelection = false;
+                  if(!HighLightPosition.isEmpty){
                     setState(() {
                       HighLightPosition = [];
                     });
                   }
-                }else{
-                  setState(() {
-                    HighLightPosition = [];
-                  });
                 }
+
               },
               child: Stack(
                 alignment: Alignment.center,
