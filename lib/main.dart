@@ -17,6 +17,7 @@ class _ChessBoardState extends State<ChessBoard> {
     double screenWidth = MediaQuery.of(context).size.width;
     double gridCellSize = screenWidth / 8;
     chess.Chess position = chess.Chess.fromFEN('r6r/1pNk1ppp/2np4/b3p3/4P1b1/N1Q5/P4PPP/R3KB1R w KQ - 3 18');
+    List<chess.Move> HighLightPosition = [];
     String AlphCars = "abcdefgh";
     String NumCars = "012345678";
     return Scaffold(
@@ -47,95 +48,110 @@ class _ChessBoardState extends State<ChessBoard> {
                   }
                 }
               },
-              child: Container(
-                width: gridCellSize,
-                height: gridCellSize,
-                color: (((index ~/ 8 ) % 2) == 0 ) ? ((index % 2 == 0) ? Colors.yellow[100] : Colors.green ) : ((index % 2 != 0) ? Colors.yellow[100] : Colors.green ),
-                child: Center(
-                  child : (){
-                    if(position.turn == chess.Color.BLACK){
-                      if(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1]) != null){
-                        if(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1])?.color == chess.Color.BLACK){
-                          switch(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1])?.type) {
-                            case chess.PieceType.KING:
-                              return Image.asset("assets/BlackKing.png");
-                            case chess.PieceType.KNIGHT:
-                              return Image.asset("assets/BlackKnight.png");
-                            case chess.PieceType.BISHOP:
-                              return Image.asset("assets/BlackBishop.png");
-                            case chess.PieceType.QUEEN:
-                              return Image.asset("assets/BlackQueen.png");
-                            case chess.PieceType.PAWN:
-                              return Image.asset("assets/BlackPawn.png");
-                            case chess.PieceType.ROOK:
-                              return Image.asset("assets/BlackRook.png");
-                            default:
-                              return null;
+              child: Stack(
+                alignment: Alignment.center,
+                children : [
+                  Container(
+                    width: gridCellSize,//Size
+                    height: gridCellSize,//Size
+                    color: (((index ~/ 8 ) % 2) == 0 ) ? ((index % 2 == 0) ? Colors.yellow[100] : Colors.green ) : ((index % 2 != 0) ? Colors.yellow[100] : Colors.green ),//The case color
+                    child: Center(//The piece
+                      child : (){
+                        if(position.turn == chess.Color.BLACK){
+                          if(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1]) != null){
+                            if(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1])?.color == chess.Color.BLACK){
+                              switch(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1])?.type) {
+                                case chess.PieceType.KING:
+                                  return Image.asset("assets/BlackKing.png");
+                                case chess.PieceType.KNIGHT:
+                                  return Image.asset("assets/BlackKnight.png");
+                                case chess.PieceType.BISHOP:
+                                  return Image.asset("assets/BlackBishop.png");
+                                case chess.PieceType.QUEEN:
+                                  return Image.asset("assets/BlackQueen.png");
+                                case chess.PieceType.PAWN:
+                                  return Image.asset("assets/BlackPawn.png");
+                                case chess.PieceType.ROOK:
+                                  return Image.asset("assets/BlackRook.png");
+                                default:
+                                  return null;
+                              }
+                            }
+                            else{
+                              switch(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1])?.type) {
+                                case chess.PieceType.KING:
+                                  return Image.asset("assets/WhiteKing.png");
+                                case chess.PieceType.KNIGHT:
+                                  return Image.asset("assets/WhiteKnight.png");
+                                case chess.PieceType.BISHOP:
+                                  return Image.asset("assets/WhiteBishop.png");
+                                case chess.PieceType.QUEEN:
+                                  return Image.asset("assets/WhiteQueen.png");
+                                case chess.PieceType.PAWN:
+                                  return Image.asset("assets/WhitePawn.png");
+                                case chess.PieceType.ROOK:
+                                  return Image.asset("assets/WhiteRook.png");
+                                default:
+                                  return null;
+                              }
+                            }
                           }
-                        }
-                        else{
-                          switch(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1])?.type) {
-                            case chess.PieceType.KING:
-                              return Image.asset("assets/WhiteKing.png");
-                            case chess.PieceType.KNIGHT:
-                              return Image.asset("assets/WhiteKnight.png");
-                            case chess.PieceType.BISHOP:
-                              return Image.asset("assets/WhiteBishop.png");
-                            case chess.PieceType.QUEEN:
-                              return Image.asset("assets/WhiteQueen.png");
-                            case chess.PieceType.PAWN:
-                              return Image.asset("assets/WhitePawn.png");
-                            case chess.PieceType.ROOK:
-                              return Image.asset("assets/WhiteRook.png");
-                            default:
-                              return null;
+                          return null;
+                        }else{
+                          if(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))]) != null){
+                            if(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))])?.color == chess.Color.BLACK){
+                              switch(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))])?.type) {
+                                case chess.PieceType.KING:
+                                  return Image.asset("assets/BlackKing.png");
+                                case chess.PieceType.KNIGHT:
+                                  return Image.asset("assets/BlackKnight.png");
+                                case chess.PieceType.BISHOP:
+                                  return Image.asset("assets/BlackBishop.png");
+                                case chess.PieceType.QUEEN:
+                                  return Image.asset("assets/BlackQueen.png");
+                                case chess.PieceType.PAWN:
+                                  return Image.asset("assets/BlackPawn.png");
+                                case chess.PieceType.ROOK:
+                                  return Image.asset("assets/BlackRook.png");
+                                default:
+                                  return null;
+                              }
+                            }
+                            else{
+                              switch(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))])?.type) {
+                                case chess.PieceType.KING:
+                                  return Image.asset("assets/WhiteKing.png");
+                                case chess.PieceType.KNIGHT:
+                                  return Image.asset("assets/WhiteKnight.png");
+                                case chess.PieceType.BISHOP:
+                                  return Image.asset("assets/WhiteBishop.png");
+                                case chess.PieceType.QUEEN:
+                                  return Image.asset("assets/WhiteQueen.png");
+                                case chess.PieceType.PAWN:
+                                  return Image.asset("assets/WhitePawn.png");
+                                case chess.PieceType.ROOK:
+                                  return Image.asset("assets/WhiteRook.png");
+                                default:
+                                  return null;
+                              }
+                            }
                           }
+                          return null;
                         }
-                      }
-                      return null;
-                    }else{
-                      if(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))]) != null){
-                        if(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))])?.color == chess.Color.BLACK){
-                          switch(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))])?.type) {
-                            case chess.PieceType.KING:
-                              return Image.asset("assets/BlackKing.png");
-                            case chess.PieceType.KNIGHT:
-                              return Image.asset("assets/BlackKnight.png");
-                            case chess.PieceType.BISHOP:
-                              return Image.asset("assets/BlackBishop.png");
-                            case chess.PieceType.QUEEN:
-                              return Image.asset("assets/BlackQueen.png");
-                            case chess.PieceType.PAWN:
-                              return Image.asset("assets/BlackPawn.png");
-                            case chess.PieceType.ROOK:
-                              return Image.asset("assets/BlackRook.png");
-                            default:
-                              return null;
-                          }
-                        }
-                        else{
-                          switch(position.get(AlphCars[index % 8]+NumCars[8-((index ~/ 8))])?.type) {
-                            case chess.PieceType.KING:
-                              return Image.asset("assets/WhiteKing.png");
-                            case chess.PieceType.KNIGHT:
-                              return Image.asset("assets/WhiteKnight.png");
-                            case chess.PieceType.BISHOP:
-                              return Image.asset("assets/WhiteBishop.png");
-                            case chess.PieceType.QUEEN:
-                              return Image.asset("assets/WhiteQueen.png");
-                            case chess.PieceType.PAWN:
-                              return Image.asset("assets/WhitePawn.png");
-                            case chess.PieceType.ROOK:
-                              return Image.asset("assets/WhiteRook.png");
-                            default:
-                              return null;
-                          }
-                        }
-                      }
-                      return null;
-                    }
-                  }(),
-                ),
+                      }(),
+                    ),
+                  ),
+                  Container(
+                    child: (){
+                      return Image.asset(
+                        "assets/Ring.png",
+                        width: gridCellSize-4,
+                        height: gridCellSize-4,
+                        opacity: const AlwaysStoppedAnimation(.8),
+                      );
+                    }(),
+                  ),
+                ],
               ),
             ),
           );

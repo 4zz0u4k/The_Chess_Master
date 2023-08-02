@@ -21,6 +21,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
+
   assets:
     - assets/BlackKing.png
     - assets/BlackKnight.png
@@ -34,5 +35,6 @@ flutter:
     - assets/WhiteQueen.png
     - assets/WhiteRook.png
     - assets/WhitePawn.png
+    - assets/Ring.png
 
 
