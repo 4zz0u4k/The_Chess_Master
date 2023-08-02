@@ -12,14 +12,14 @@ class ChessBoard extends StatefulWidget {
 
 }
 class _ChessBoardState extends State<ChessBoard> {
+  List HighLightPosition = [];
+  chess.Chess position = chess.Chess.fromFEN('r6r/1pNk1ppp/2np4/b3p3/4P1b1/N1Q5/P4PPP/R3KB1R w KQ - 3 18');
+  String AlphCars = "abcdefgh";
+  String NumCars = "012345678";
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double gridCellSize = screenWidth / 8;
-    chess.Chess position = chess.Chess.fromFEN('r6r/1pNk1ppp/2np4/b3p3/4P1b1/N1Q5/P4PPP/R3KB1R w KQ - 3 18');
-    List<chess.Move> HighLightPosition = [];
-    String AlphCars = "abcdefgh";
-    String NumCars = "012345678";
     return Scaffold(
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -41,11 +41,20 @@ class _ChessBoardState extends State<ChessBoard> {
                 if(position.get(TappedPosition) != null){
                   if(position.get(TappedPosition)?.color == position.turn){
                     Map options = {'asObjects': true};
-                    List pieceMoves = position.moves(options).where((move) => move.from == chess.Chess.SQUARES[TappedPosition]!).toList();
-                    for(chess.Move move in pieceMoves){
-                      print(move.toAlgebraic);
-                    }
+                    List Positions =  position.moves(options).where((move) => move.from == chess.Chess.SQUARES[TappedPosition]!).toList();
+                    setState(() {
+                      HighLightPosition = Positions;
+                      print(HighLightPosition);
+                    });
+                  }else{
+                    setState(() {
+                      HighLightPosition = [];
+                    });
                   }
+                }else{
+                  setState(() {
+                    HighLightPosition = [];
+                  });
                 }
               },
               child: Stack(
@@ -143,12 +152,23 @@ class _ChessBoardState extends State<ChessBoard> {
                   ),
                   Container(
                     child: (){
-                      return Image.asset(
-                        "assets/Ring.png",
-                        width: gridCellSize-4,
-                        height: gridCellSize-4,
-                        opacity: const AlwaysStoppedAnimation(.8),
-                      );
+                      String currentPos = '';
+                      if(position.turn == chess.Color.BLACK){
+                        currentPos = AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1];
+                      }
+                      else{
+                        currentPos = AlphCars[index % 8]+NumCars[8-((index ~/ 8))];
+                      }
+                      for(chess.Move move in HighLightPosition){
+                        if(move.toAlgebraic == currentPos){
+                          return Image.asset(
+                            "assets/Ring.png",
+                            width: gridCellSize-4,
+                            height: gridCellSize-4,
+                            //opacity: const AlwaysStoppedAnimation(.8),
+                          );
+                        }
+                      }
                     }(),
                   ),
                 ],
