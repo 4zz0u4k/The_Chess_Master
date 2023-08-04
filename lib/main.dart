@@ -2,11 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:chess/chess.dart' as chess;
 
 
-void main() => runApp(MaterialApp(
-  home: ChessBoard(),
-));
+void main() {
+  String Solution = "e5f6 e8e1 g1f2 e1f1";
+  chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
+  List<String> initSolutions = Solution.split(' ');
+  Map options = {'asObjects': true};
+  for(chess.Move move in initialePos.moves()){
+    if(move.toAlgebraic == initSolutions[0].substring(4-2)){
+      //Move the piece
+      initialePos.move(move);
+    }
+  }
+  initSolutions.removeAt(0);
+
+  runApp(MaterialApp(
+    home: ChessBoard(
+      position : initialePos,
+      solution: initSolutions,
+    ),
+  ));
+}
 
 class ChessBoard extends StatefulWidget {
+  final chess.Chess position;
+  final List<String> solution;
+  ChessBoard({required this.position, required this.solution});
   @override
   _ChessBoardState createState() => _ChessBoardState();
 
@@ -14,9 +34,17 @@ class ChessBoard extends StatefulWidget {
 class _ChessBoardState extends State<ChessBoard> {
   List HighLightPosition = [];
   bool isOnSelection = false;
-  chess.Chess position = chess.Chess.fromFEN('r6r/1pNk1ppp/2np4/b3p3/4P1b1/N1Q5/P4PPP/R3KB1R w KQ - 3 18');
+  bool first = true;
+  chess.Chess position = chess.Chess();
   String AlphCars = "abcdefgh";
   String NumCars = "012345678";
+  @override
+  void initState() {
+    super.initState();
+    position = widget.position;
+    List<String> solutionMoves = widget.solution;
+    // Now you can use the extracted strings from the solution
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -25,7 +53,7 @@ class _ChessBoardState extends State<ChessBoard> {
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 8,
-          childAspectRatio: 1.0, // Makes sure the cells are square
+          childAspectRatio: 1.0,
         ),
         itemCount: 64,
         itemBuilder: (context, index) {
@@ -44,11 +72,12 @@ class _ChessBoardState extends State<ChessBoard> {
                     if(position.get(TappedPosition)?.color == position.turn){
                       Map options = {'asObjects': true};
                       List Positions =  position.moves(options).where((move) => move.from == chess.Chess.SQUARES[TappedPosition]!).toList();
-                      isOnSelection = true;
-                      setState(() {
-                        HighLightPosition = Positions;
-                        print(HighLightPosition);
-                      });
+                      if(Positions.isNotEmpty){
+                        isOnSelection = true;
+                        setState(() {
+                          HighLightPosition = Positions;
+                        });
+                      }
                     }
                   }
                 }else{ //About to select a Square or just leave the choices
