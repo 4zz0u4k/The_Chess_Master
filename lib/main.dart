@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:chess/chess.dart' as chess;
 
@@ -7,10 +9,11 @@ void main() {
   chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
   List<String> initSolutions = Solution.split(' ');
   Map options = {'asObjects': true};
-  for(chess.Move move in initialePos.moves()){
-    if(move.toAlgebraic == initSolutions[0].substring(4-2)){
+  for(chess.Move move in initialePos.moves(options)){
+    if(move.toAlgebraic == initSolutions[0].substring(2)){
       //Move the piece
       initialePos.move(move);
+      break;
     }
   }
   initSolutions.removeAt(0);
@@ -34,6 +37,7 @@ class ChessBoard extends StatefulWidget {
 class _ChessBoardState extends State<ChessBoard> {
   List HighLightPosition = [];
   bool isOnSelection = false;
+  List<String> solutionMoves = [];
   bool first = true;
   chess.Chess position = chess.Chess();
   String AlphCars = "abcdefgh";
@@ -42,8 +46,7 @@ class _ChessBoardState extends State<ChessBoard> {
   void initState() {
     super.initState();
     position = widget.position;
-    List<String> solutionMoves = widget.solution;
-    // Now you can use the extracted strings from the solution
+    solutionMoves = widget.solution;
   }
   @override
   Widget build(BuildContext context) {
@@ -83,11 +86,34 @@ class _ChessBoardState extends State<ChessBoard> {
                 }else{ //About to select a Square or just leave the choices
                   for(chess.Move move in HighLightPosition){
                     if(move.toAlgebraic == TappedPosition){
-                      //Move the piece
-                      position.move(move);
-                      setState(() {
-                        HighLightPosition = [];
-                      });
+                      if(TappedPosition != solutionMoves[0].substring(2)){
+                        print("Nein BYE BYE !!");
+                      }
+                      else{
+                        //Move the piece
+                        chess.Color lastOne = position.turn;
+                        position.move(move);
+                        solutionMoves.removeAt(0);
+                        if(solutionMoves.isEmpty){
+                          print("c bon frr");
+                          position.turn = lastOne;
+                        }
+                        else{
+                          Map options = {'asObjects': true};
+                          for(chess.Move move in position.moves(options)){
+                            if(move.toAlgebraic == solutionMoves[0].substring(2)){
+                              //Move the piece
+                              position.move(move);
+                              break;
+                            }
+                          }
+                          solutionMoves.removeAt(0);
+                        }
+
+                        setState(() {
+                          HighLightPosition = [];
+                        });
+                      }
                     }
                   }
                   isOnSelection = false;
