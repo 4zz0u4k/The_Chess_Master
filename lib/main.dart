@@ -26,6 +26,7 @@ void updatePuzzle(chess.Chess position,List<String> initSolutions) {
   print(position.move_number);
 }
 
+
 void main() {
 
   List<String> initSolutions = [];
@@ -33,16 +34,31 @@ void main() {
   chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
   SetUpThePuzzle(Solution,initialePos,initSolutions);
   print(initSolutions);
-  runApp(MaterialApp(
-    home: Center(
-      child: ChessBoard(
-      position : initialePos,
-      solution: initSolutions,
-      onPuzzleSolved: updatePuzzle,
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Chess Board Example'),
+        ),
+        body: Column(
+          children: [
+            Text('loooooool'),
+            Expanded(
+              child: ChessBoard(
+              position : initialePos,
+              solution: initSolutions,
+              onPuzzleSolved: updatePuzzle,
+              ),
+            ),
+          ]
+        ),
       ),
     ),
-  ));
+  );
 }
+
+
+
 
 class ChessBoard extends StatefulWidget {
   chess.Chess position;
@@ -115,7 +131,6 @@ class _ChessBoardState extends State<ChessBoard> {
                   for(chess.Move move in HighLightPosition){
                     if(move.toAlgebraic == TappedPosition){
                       if((TappedPosition != solutionMoves[0].substring(2)) || (move.fromAlgebraic.toString() != solutionMoves[0].substring(0,2))){
-                        print(solutionMoves[0].substring(0,2));
                         print("Nein BYE BYE !!");
                       }
                       else{
@@ -283,6 +298,31 @@ class _ChessBoardState extends State<ChessBoard> {
     );
   }
 }
+enum Level{
+  hard,
+  beginner,
+  master,
+  intermediate
+}
+
+
+class UpperInfos extends StatefulWidget {
+  Level level;
+  int challengeId;
+  int elo;
+  UpperInfos({required this.level,required this.challengeId,required this.elo});
+
+  @override
+  State<UpperInfos> createState() => _UpperInfosState();
+}
+
+class _UpperInfosState extends State<UpperInfos> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
 
 
 
