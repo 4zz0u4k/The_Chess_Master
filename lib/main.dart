@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:chess/chess.dart' as chess;
 
-
-void main() {
-  String Solution = "e5f6 e8e1 g1f2 e1f1";
-  chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
-  List<String> initSolutions = Solution.split(' ');
+void SetUpThePuzzle(String Solution,chess.Chess initialePos,List<String> initSolutions){
+  initSolutions.clear();
+  initSolutions.addAll(Solution.split(' '));
   Map options = {'asObjects': true};
   for(chess.Move move in initialePos.moves(options)){
     if(move.toAlgebraic == initSolutions[0].substring(2)){
@@ -17,19 +15,42 @@ void main() {
     }
   }
   initSolutions.removeAt(0);
+}
 
+void updatePuzzle(chess.Chess position,List<String> initSolutions) {
+  position.clear();
+  position.load("2rq2k1/1R3pp1/p5bp/8/1P2RQ1P/8/6P1/7K b - - 0 38");
+  SetUpThePuzzle("g6e4 f4f7 g8h8 f7g7",position,initSolutions);
+  print("heheheheh rana hna !!");
+  print(initSolutions);
+  print(position.move_number);
+}
+
+void main() {
+
+  List<String> initSolutions = [];
+  String Solution = "e5f6 e8e1 g1f2 e1f1";
+  chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
+  SetUpThePuzzle(Solution,initialePos,initSolutions);
+  print(initSolutions);
   runApp(MaterialApp(
-    home: ChessBoard(
+    home: Center(
+      child: ChessBoard(
       position : initialePos,
       solution: initSolutions,
+      onPuzzleSolved: updatePuzzle,
+      ),
     ),
   ));
 }
 
 class ChessBoard extends StatefulWidget {
-  final chess.Chess position;
-  final List<String> solution;
-  ChessBoard({required this.position, required this.solution});
+  chess.Chess position;
+  List<String> solution;
+  final Function onPuzzleSolved;
+
+  ChessBoard({required this.position, required this.solution,required this.onPuzzleSolved});
+
   @override
   _ChessBoardState createState() => _ChessBoardState();
 
@@ -38,15 +59,22 @@ class _ChessBoardState extends State<ChessBoard> {
   List HighLightPosition = [];
   bool isOnSelection = false;
   List<String> solutionMoves = [];
-  bool first = true;
   chess.Chess position = chess.Chess();
   String AlphCars = "abcdefgh";
   String NumCars = "012345678";
+
   @override
   void initState() {
     super.initState();
     position = widget.position;
     solutionMoves = widget.solution;
+  }
+
+  void _handlePuzzleSolved(chess.Chess position , List<String> Solutions) {
+    // Perform any logic you need when the puzzle is solved
+    widget.onPuzzleSolved(position , Solutions); // Call the callback function
+    print(Solutions);
+    print(position.move_number);
   }
   @override
   Widget build(BuildContext context) {
@@ -109,10 +137,16 @@ class _ChessBoardState extends State<ChessBoard> {
                           }
                           solutionMoves.removeAt(0);
                         }
-
                         setState(() {
                           HighLightPosition = [];
                         });
+                        if(solutionMoves.isEmpty){
+                          print("heheheheh rana hna !!");
+                          _handlePuzzleSolved(position , solutionMoves);
+                          print(solutionMoves);
+                          print(position.move_number);
+                          setState(() {});
+                        }
                       }
                     }
                   }
