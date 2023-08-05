@@ -80,8 +80,8 @@ class _ChessBoardState extends State<ChessBoard> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double gridCellSize = screenWidth / 8;
-    return Scaffold(
-      body: GridView.builder(
+    return Container(
+      child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 8,
           childAspectRatio: 1.0,
@@ -114,7 +114,8 @@ class _ChessBoardState extends State<ChessBoard> {
                 }else{ //About to select a Square or just leave the choices
                   for(chess.Move move in HighLightPosition){
                     if(move.toAlgebraic == TappedPosition){
-                      if(TappedPosition != solutionMoves[0].substring(2)){
+                      if((TappedPosition != solutionMoves[0].substring(2)) || (move.fromAlgebraic.toString() != solutionMoves[0].substring(0,2))){
+                        print(solutionMoves[0].substring(0,2));
                         print("Nein BYE BYE !!");
                       }
                       else{
