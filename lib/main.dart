@@ -28,32 +28,31 @@ void updatePuzzle(chess.Chess position,List<String> initSolutions) {
 
 
 void main() {
-
-  List<String> initSolutions = [];
-  String Solution = "e5f6 e8e1 g1f2 e1f1";
-  chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
-  SetUpThePuzzle(Solution,initialePos,initSolutions);
-  print(initSolutions);
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Chess Board Example'),
-        ),
-        body: Column(
-          children: [
-            Text('loooooool'),
-            Expanded(
-              child: ChessBoard(
-              position : initialePos,
-              solution: initSolutions,
-              onPuzzleSolved: updatePuzzle,
-              ),
-            ),
-          ]
-        ),
-      ),
-    ),
+  runApp(MyApp()
+    //MaterialApp(
+    //   home: Scaffold(
+    //     appBar: AppBar(
+    //       title: Text('Chess Board Example'),
+    //     ),
+    //     body: Column(
+    //       children: [
+    //
+    //         // UpperInfos(
+    //         //     challengeId: "04DX",
+    //         //     elo: 750,
+    //         //     Theme: "Double King Atack mate in 2"
+    //         // ),
+    //         // Expanded(
+    //         //   child: ChessBoard(
+    //         //   position : initialePos,
+    //         //   solution: initSolutions,
+    //         //   onPuzzleSolved: updatePuzzle,
+    //         //   ),
+    //         // ),
+    //       ]
+    //     ),
+    //   ),
+    // ),
   );
 }
 
@@ -96,16 +95,19 @@ class _ChessBoardState extends State<ChessBoard> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double gridCellSize = screenWidth / 8;
-    return Container(
-      child: GridView.builder(
+    double aspectRatio = 1.0;
+    return GridView.builder(
+        physics: NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 8,
-          childAspectRatio: 1.0,
+          childAspectRatio: aspectRatio,
         ),
         itemCount: 64,
         itemBuilder: (context, index) {
-          return Center(
-            child: GestureDetector(
+          return Container(
+            width: gridCellSize,
+            height: gridCellSize,
+            child : GestureDetector(
               onTap: () {
                 //get the position
                 String TappedPosition;
@@ -182,7 +184,7 @@ class _ChessBoardState extends State<ChessBoard> {
                     width: gridCellSize,//Size
                     height: gridCellSize,//Size
                     color: (((index ~/ 8 ) % 2) == 0 ) ? ((index % 2 == 0) ? Colors.yellow[100] : Colors.green ) : ((index % 2 != 0) ? Colors.yellow[100] : Colors.green ),//The case color
-                    child: Center(//The piece
+                    child: Container(//The piece
                       child : (){
                         if(position.turn == chess.Color.BLACK){
                           if(position.get(AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1]) != null){
@@ -294,7 +296,6 @@ class _ChessBoardState extends State<ChessBoard> {
             ),
           );
         },
-      ),
     );
   }
 }
@@ -307,21 +308,181 @@ enum Level{
 
 
 class UpperInfos extends StatefulWidget {
-  Level level;
-  int challengeId;
+  String challengeId;
   int elo;
-  UpperInfos({required this.level,required this.challengeId,required this.elo});
-
+  String Theme;
+  UpperInfos({required this.challengeId,required this.elo,required this.Theme});
   @override
   State<UpperInfos> createState() => _UpperInfosState();
 }
 
 class _UpperInfosState extends State<UpperInfos> {
+  String challengeId = "";
+  int elo = 0;
+  String Theme = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    challengeId = widget.challengeId;
+    elo = widget.elo;
+    Theme = widget.Theme;
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        LevelDeficulty(elo: elo),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+                "Elo : ${elo}"
+            ),
+            Text(
+                "Challenge ID : ${challengeId}"
+            ),
+            Text(
+                "Theme : ${Theme}"
+            ),
+          ],
+        )
+      ],
+    );
   }
 }
+
+
+class LevelDeficulty extends StatefulWidget {
+  int elo;
+
+  LevelDeficulty({required this.elo});
+
+  @override
+  State<LevelDeficulty> createState() => _LevelDeficultyState();
+}
+
+class _LevelDeficultyState extends State<LevelDeficulty> {
+  int elo = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    elo = widget.elo;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          child: (){
+            Color color;
+            if(elo<=500){
+              color = Color.fromRGBO(96, 244, 119, 1.0);
+            }else if(500< elo && elo <= 1000){
+              color = Color.fromRGBO(241, 200, 63, 1.0);
+            }else{
+              color = Color.fromRGBO(234, 42, 42, 1.0);
+            }
+            return(
+                Container(
+                  width: 120,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+                  ),
+              )
+            );
+          }(),
+        ),
+        Container(
+          child: (){
+            String text;
+            if(elo<=500){
+              text = "Beginner";
+            }else if(500< elo && elo <= 1000){
+              text = "intermediate";
+            }else{
+              text = "expert";
+            }
+            return(
+                Text(
+                  "${text}",
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white, // Set the color here
+                  ),
+                )
+            );
+          }(),
+        ),
+      ],
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+
+  Widget build(BuildContext context) {
+
+    List<String> initSolutions = [];
+    String Solution = "e5f6 e8e1 g1f2 e1f1";
+    chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
+    SetUpThePuzzle(Solution,initialePos,initSolutions);
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Container(
+                width: screenWidth,
+                color: Colors.brown,
+                child : UpperInfos(
+                  challengeId: "04DX",
+                  elo: 750,
+                  Theme: "Double King Atack mate in 2",
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Container(
+                color: Colors.brown,
+                child: ChessBoard(
+                 position : initialePos,
+                 solution: initSolutions,
+                 onPuzzleSolved: updatePuzzle,
+              ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(
+              color: Colors.brown,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 
 
 
