@@ -36,5 +36,13 @@ flutter:
     - assets/WhiteRook.png
     - assets/WhitePawn.png
     - assets/Ring.png
+  fonts:
+    - family: Magra
+      fonts:
+        - asset: fonts/Magra-Regular.ttf
+        - asset: fonts/Magra-Bold.ttf
+          weight: 700
+
+
 
 

@@ -335,18 +335,33 @@ class _UpperInfosState extends State<UpperInfos> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         LevelDeficulty(elo: elo),
+        SizedBox(height: 8.0),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-                "Elo : ${elo}"
+              "Elo : ${elo}",
+              style: TextStyle(
+                fontFamily: "Magra",
+                fontSize: 18,
+              ),
             ),
+            SizedBox(height: 2.0),
             Text(
-                "Challenge ID : ${challengeId}"
+              "Puzzle ID : ${challengeId}",
+              style: TextStyle(
+                fontFamily: "Magra",
+                fontSize: 18,
+              ),
             ),
+            SizedBox(height: 2.0),
             Text(
-                "Theme : ${Theme}"
+              "Theme : ${Theme}",
+              style: TextStyle(
+                fontFamily: "Magra",
+                fontSize: 18,
+              ),
             ),
           ],
         )
@@ -377,6 +392,8 @@ class _LevelDeficultyState extends State<LevelDeficulty> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -385,21 +402,41 @@ class _LevelDeficultyState extends State<LevelDeficulty> {
             Color color;
             if(elo<=500){
               color = Color.fromRGBO(96, 244, 119, 1.0);
+              return(
+                  Container(
+                    width: screenWidth*0.5,
+                    height: screenHeight*0.055,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+                    ),
+                  )
+              );
             }else if(500< elo && elo <= 1000){
               color = Color.fromRGBO(241, 200, 63, 1.0);
+              return(
+                  Container(
+                    width: screenWidth*0.5,
+                    height: screenHeight*0.055,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+                    ),
+                  )
+              );
             }else{
               color = Color.fromRGBO(234, 42, 42, 1.0);
+              return(
+                  Container(
+                    width: screenWidth*0.5,
+                    height: screenHeight*0.055,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+                    ),
+                  )
+              );
             }
-            return(
-                Container(
-                  width: 120,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
-                  ),
-              )
-            );
           }(),
         ),
         Container(
@@ -472,13 +509,27 @@ class MyApp extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Container(
-              color: Colors.brown,
+              color: Colors.blueAccent,
               ),
             )
           ],
         ),
       ),
     );
+  }
+}
+
+class GameInfos extends StatefulWidget {
+  const GameInfos({super.key});
+
+  @override
+  State<GameInfos> createState() => _GameInfosState();
+}
+
+class _GameInfosState extends State<GameInfos> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
 
