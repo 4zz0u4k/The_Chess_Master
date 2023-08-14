@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:chess/chess.dart' as chess;
 
@@ -476,7 +474,6 @@ class MyApp extends StatelessWidget {
     chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
     SetUpThePuzzle(Solution,initialePos,initSolutions);
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -509,7 +506,10 @@ class MyApp extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Container(
-              color: Colors.blueAccent,
+                color: Colors.blueAccent,
+                width: screenWidth,
+                child: GameInfos(
+                ),
               ),
             )
           ],
@@ -520,16 +520,60 @@ class MyApp extends StatelessWidget {
 }
 
 class GameInfos extends StatefulWidget {
-  const GameInfos({super.key});
+  // GameInfos({});
 
   @override
   State<GameInfos> createState() => _GameInfosState();
 }
 
 class _GameInfosState extends State<GameInfos> {
+  int solvedPuzzles = 0;
+  int avreageElo = 0;
+  int highestSolvedElo = 0;
+  bool showOptions = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      children: [
+        Text(
+          "Solved Puzzles : ${solvedPuzzles}",
+          style: TextStyle(
+            fontFamily: "Magra",
+            fontSize: 20,
+          ),
+        ),
+        SizedBox(height: 2.0),
+        Text(
+          "Average Elo : ${avreageElo}",
+          style: TextStyle(
+            fontFamily: "Magra",
+            fontSize: 20,
+          ),
+        ),
+        SizedBox(height: 2.0),
+        Text(
+          "Highest Solved Puzzle Elo : ${highestSolvedElo}",
+          style: TextStyle(
+            fontFamily: "Magra",
+            fontSize: 20,
+          ),
+        ),
+        if(showOptions)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(onPressed: (){}, child: const Text("lol")),
+              ElevatedButton(onPressed: (){}, child: const Text("lol")),
+            ],
+          )
+        ,
+      ],
+    );
   }
 }
 
