@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:chess/chess.dart' as chess;
 
@@ -30,19 +32,29 @@ class ChessBoard extends StatefulWidget {
   chess.Chess position;
   List<String> solution;
   final Function onPuzzleSolved;
+  bool showHint;
 
-  ChessBoard({required this.position, required this.solution,required this.onPuzzleSolved});
+  ChessBoard({required this.showHint ,required this.position, required this.solution,required this.onPuzzleSolved});
 
   @override
   _ChessBoardState createState() => _ChessBoardState();
 
 }
 class _ChessBoardState extends State<ChessBoard> {
+
   List HighLightPosition = [];
+
+  String HintedSquare = "";
+  bool showHint = false;
+
   bool isOnSelection = false;
+
   List<String> solutionMoves = [];
+
   chess.Chess position = chess.Chess();
+
   String AlphCars = "abcdefgh";
+
   String NumCars = "012345678";
 
   @override
@@ -50,6 +62,13 @@ class _ChessBoardState extends State<ChessBoard> {
     super.initState();
     position = widget.position;
     solutionMoves = widget.solution;
+    showHint = widget.showHint;
+  }
+
+  void updateHintedPositon(){
+    setState(() {
+      showHint = true;
+    });
   }
 
   void _handlePuzzleSolved(chess.Chess position , List<String> Solutions) {
@@ -246,15 +265,36 @@ class _ChessBoardState extends State<ChessBoard> {
                       }
                       for(chess.Move move in HighLightPosition){
                         if(move.toAlgebraic == currentPos){
-                          return Image.asset(
-                            "assets/Ring.png",
-                            width: gridCellSize-4,
-                            height: gridCellSize-4,
-                            //opacity: const AlwaysStoppedAnimation(.8),
+                          return Container(
+                            child: Image.asset(
+                              "assets/Ring.png",
+                              width: gridCellSize-4,
+                              height: gridCellSize-4,
+                              //opacity: const AlwaysStoppedAnimation(.8),,
+                          )
+
                           );
                         }
                       }
                     }(),
+                  ),
+                  Container(
+                    child: (){
+                      String currentPos = '';
+                      if(position.turn == chess.Color.BLACK){
+                        currentPos = AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1];
+                      }
+                      else{
+                        currentPos = AlphCars[index % 8]+NumCars[8-((index ~/ 8))];
+                      }
+                      if( (currentPos == solutionMoves[0].substring(0,2)) && (showHint) ){
+                        return Container(
+                          color: Colors.blue.withOpacity(0.5),
+                          width: gridCellSize,
+                          height: gridCellSize,
+                        );
+                      }
+                    }()
                   ),
                 ],
               ),
@@ -269,6 +309,15 @@ enum Level{
   beginner,
   master,
   intermediate
+}
+
+void updatePuzzle(chess.Chess position,List<String> initSolutions) {
+  position.clear();
+  position.load("2rq2k1/1R3pp1/p5bp/8/1P2RQ1P/8/6P1/7K b - - 0 38");
+  SetUpThePuzzle("g6e4 f4f7 g8h8 f7g7",position,initSolutions);
+  print("heheheheh rana hna !!");
+  print(initSolutions);
+  print(position.move_number);
 }
 
 
@@ -291,6 +340,13 @@ class _MyAppState extends State<MyApp> {
     SetUpThePuzzle(Solution,initialePos,initSolutions);
     double screenWidth = MediaQuery.of(context).size.width;
 
+    bool showHint = false;
+
+    void HintButtonTriggered(){
+      setState(() {
+        showHint = true;
+      });
+    }
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -317,6 +373,7 @@ class _MyAppState extends State<MyApp> {
                  position : initialePos,
                  solution: initSolutions,
                  onPuzzleSolved: updatePuzzle,
+                  showHint : showHint,
               ),
               ),
             ),
@@ -326,6 +383,7 @@ class _MyAppState extends State<MyApp> {
                 color: Colors.blueAccent,
                 width: screenWidth,
                 child: GameInfos(
+                  Hint: HintButtonTriggered,
                   showOptions: SolvedGlobal,
                 ),
               ),
@@ -337,34 +395,35 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-void updatePuzzle(chess.Chess position,List<String> initSolutions) {
-  position.clear();
-  position.load("2rq2k1/1R3pp1/p5bp/8/1P2RQ1P/8/6P1/7K b - - 0 38");
-  SetUpThePuzzle("g6e4 f4f7 g8h8 f7g7",position,initSolutions);
-  print("heheheheh rana hna !!");
-  print(initSolutions);
-  print(position.move_number);
-}
+
 
 
 
 class GameInfos extends StatefulWidget {
+  void Hint;
   bool showOptions;
-  GameInfos({required this.showOptions});
+  GameInfos({required this.showOptions , required this.Hint});
 
   @override
   State<GameInfos> createState() => _GameInfosState();
 }
 
 class _GameInfosState extends State<GameInfos> {
+
   int solvedPuzzles = 0;
   int avreageElo = 0;
   int highestSolvedElo = 0;
   bool showOptions = false;
+
+
+  _callForHint(){
+    widget.Hint;
+  }
+
+
   @override
   void initState() {
     showOptions = widget.showOptions;
-    // TODO: implement initState
   }
 
   @override
@@ -394,14 +453,20 @@ class _GameInfosState extends State<GameInfos> {
             fontSize: 20,
           ),
         ),
-        if(showOptions)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(onPressed: (){}, child: const Text("Hint")),
-              ElevatedButton(onPressed: (){}, child: const Text("Done")),
-            ],
-          )
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                onPressed: (){},
+                child: const Text("...")
+            ),
+            ElevatedButton(
+                onPressed: (){
+                  _callForHint();
+                  },
+                child: const Text("Hint")),
+          ],
+        )
         ,
       ],
     );
