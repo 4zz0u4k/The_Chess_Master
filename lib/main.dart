@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:chess/chess.dart' as chess;
 
+bool SolvedGlobal = false;
+
+
 void SetUpThePuzzle(String Solution,chess.Chess initialePos,List<String> initSolutions){
   initSolutions.clear();
   initSolutions.addAll(Solution.split(' '));
@@ -15,43 +18,9 @@ void SetUpThePuzzle(String Solution,chess.Chess initialePos,List<String> initSol
   initSolutions.removeAt(0);
 }
 
-void updatePuzzle(chess.Chess position,List<String> initSolutions) {
-  position.clear();
-  position.load("2rq2k1/1R3pp1/p5bp/8/1P2RQ1P/8/6P1/7K b - - 0 38");
-  SetUpThePuzzle("g6e4 f4f7 g8h8 f7g7",position,initSolutions);
-  print("heheheheh rana hna !!");
-  print(initSolutions);
-  print(position.move_number);
-}
-
 
 void main() {
-  runApp(MyApp()
-    //MaterialApp(
-    //   home: Scaffold(
-    //     appBar: AppBar(
-    //       title: Text('Chess Board Example'),
-    //     ),
-    //     body: Column(
-    //       children: [
-    //
-    //         // UpperInfos(
-    //         //     challengeId: "04DX",
-    //         //     elo: 750,
-    //         //     Theme: "Double King Atack mate in 2"
-    //         // ),
-    //         // Expanded(
-    //         //   child: ChessBoard(
-    //         //   position : initialePos,
-    //         //   solution: initSolutions,
-    //         //   onPuzzleSolved: updatePuzzle,
-    //         //   ),
-    //         // ),
-    //       ]
-    //     ),
-    //   ),
-    // ),
-  );
+  runApp(MyApp());
 }
 
 
@@ -85,9 +54,7 @@ class _ChessBoardState extends State<ChessBoard> {
 
   void _handlePuzzleSolved(chess.Chess position , List<String> Solutions) {
     // Perform any logic you need when the puzzle is solved
-    widget.onPuzzleSolved(position , Solutions); // Call the callback function
-    print(Solutions);
-    print(position.move_number);
+    SolvedGlobal = true;
   }
   @override
   Widget build(BuildContext context) {
@@ -305,6 +272,165 @@ enum Level{
 }
 
 
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+
+  Widget build(BuildContext context) {
+
+    List<String> initSolutions = [];
+    String Solution = "e5f6 e8e1 g1f2 e1f1";
+    chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
+    SetUpThePuzzle(Solution,initialePos,initSolutions);
+    double screenWidth = MediaQuery.of(context).size.width;
+
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Container(
+                width: screenWidth,
+                color: Colors.brown,
+                child : UpperInfos(
+                  challengeId: "04DX",
+                  elo: 750,
+                  Theme: "Double King Atack mate in 2",
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Container(
+                color: Colors.brown,
+                child: ChessBoard(
+                 position : initialePos,
+                 solution: initSolutions,
+                 onPuzzleSolved: updatePuzzle,
+              ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(
+                color: Colors.blueAccent,
+                width: screenWidth,
+                child: GameInfos(
+                  showOptions: SolvedGlobal,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void updatePuzzle(chess.Chess position,List<String> initSolutions) {
+  position.clear();
+  position.load("2rq2k1/1R3pp1/p5bp/8/1P2RQ1P/8/6P1/7K b - - 0 38");
+  SetUpThePuzzle("g6e4 f4f7 g8h8 f7g7",position,initSolutions);
+  print("heheheheh rana hna !!");
+  print(initSolutions);
+  print(position.move_number);
+}
+
+
+
+class GameInfos extends StatefulWidget {
+  bool showOptions;
+  GameInfos({required this.showOptions});
+
+  @override
+  State<GameInfos> createState() => _GameInfosState();
+}
+
+class _GameInfosState extends State<GameInfos> {
+  int solvedPuzzles = 0;
+  int avreageElo = 0;
+  int highestSolvedElo = 0;
+  bool showOptions = false;
+  @override
+  void initState() {
+    showOptions = widget.showOptions;
+    // TODO: implement initState
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          "Solved Puzzles : ${solvedPuzzles}",
+          style: TextStyle(
+            fontFamily: "Magra",
+            fontSize: 20,
+          ),
+        ),
+        SizedBox(height: 2.0),
+        Text(
+          "Average Elo : ${avreageElo}",
+          style: TextStyle(
+            fontFamily: "Magra",
+            fontSize: 20,
+          ),
+        ),
+        SizedBox(height: 2.0),
+        Text(
+          "Highest Solved Puzzle Elo : ${highestSolvedElo}",
+          style: TextStyle(
+            fontFamily: "Magra",
+            fontSize: 20,
+          ),
+        ),
+        if(showOptions)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(onPressed: (){}, child: const Text("Hint")),
+              ElevatedButton(onPressed: (){}, child: const Text("Done")),
+            ],
+          )
+        ,
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class UpperInfos extends StatefulWidget {
   String challengeId;
   int elo;
@@ -326,7 +452,7 @@ class _UpperInfosState extends State<UpperInfos> {
     elo = widget.elo;
     Theme = widget.Theme;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -462,121 +588,6 @@ class _LevelDeficultyState extends State<LevelDeficulty> {
     );
   }
 }
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-
-  Widget build(BuildContext context) {
-
-    List<String> initSolutions = [];
-    String Solution = "e5f6 e8e1 g1f2 e1f1";
-    chess.Chess initialePos = chess.Chess.fromFEN('4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35');
-    SetUpThePuzzle(Solution,initialePos,initSolutions);
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Container(
-                width: screenWidth,
-                color: Colors.brown,
-                child : UpperInfos(
-                  challengeId: "04DX",
-                  elo: 750,
-                  Theme: "Double King Atack mate in 2",
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 5,
-              child: Container(
-                color: Colors.brown,
-                child: ChessBoard(
-                 position : initialePos,
-                 solution: initSolutions,
-                 onPuzzleSolved: updatePuzzle,
-              ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Container(
-                color: Colors.blueAccent,
-                width: screenWidth,
-                child: GameInfos(
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class GameInfos extends StatefulWidget {
-  // GameInfos({});
-
-  @override
-  State<GameInfos> createState() => _GameInfosState();
-}
-
-class _GameInfosState extends State<GameInfos> {
-  int solvedPuzzles = 0;
-  int avreageElo = 0;
-  int highestSolvedElo = 0;
-  bool showOptions = true;
-  @override
-  void initState() {
-    // TODO: implement initState
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "Solved Puzzles : ${solvedPuzzles}",
-          style: TextStyle(
-            fontFamily: "Magra",
-            fontSize: 20,
-          ),
-        ),
-        SizedBox(height: 2.0),
-        Text(
-          "Average Elo : ${avreageElo}",
-          style: TextStyle(
-            fontFamily: "Magra",
-            fontSize: 20,
-          ),
-        ),
-        SizedBox(height: 2.0),
-        Text(
-          "Highest Solved Puzzle Elo : ${highestSolvedElo}",
-          style: TextStyle(
-            fontFamily: "Magra",
-            fontSize: 20,
-          ),
-        ),
-        if(showOptions)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(onPressed: (){}, child: const Text("lol")),
-              ElevatedButton(onPressed: (){}, child: const Text("lol")),
-            ],
-          )
-        ,
-      ],
-    );
-  }
-}
-
 
 
 
