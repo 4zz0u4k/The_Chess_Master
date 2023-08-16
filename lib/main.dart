@@ -1,4 +1,3 @@
-import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:chess/chess.dart' as chess;
@@ -63,6 +62,11 @@ class _ChessBoardState extends State<ChessBoard> {
     position = widget.position;
     solutionMoves = widget.solution;
     showHint = widget.showHint;
+    if(showHint){
+      print("we made it here");
+    }else{
+      print("nein");
+    }
   }
 
   void updateHintedPositon(){
@@ -280,19 +284,21 @@ class _ChessBoardState extends State<ChessBoard> {
                   ),
                   Container(
                     child: (){
-                      String currentPos = '';
-                      if(position.turn == chess.Color.BLACK){
-                        currentPos = AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1];
-                      }
-                      else{
-                        currentPos = AlphCars[index % 8]+NumCars[8-((index ~/ 8))];
-                      }
-                      if( (currentPos == solutionMoves[0].substring(0,2)) && (showHint) ){
-                        return Container(
-                          color: Colors.blue.withOpacity(0.5),
-                          width: gridCellSize,
-                          height: gridCellSize,
-                        );
+                      if(showHint){
+                        String currentPos = '';
+                        if(position.turn == chess.Color.BLACK){
+                          currentPos = AlphCars[7-(index % 8)]+NumCars[(index ~/ 8)+1];
+                        }
+                        else{
+                          currentPos = AlphCars[index % 8]+NumCars[8-((index ~/ 8))];
+                        }
+                        if(currentPos == solutionMoves[0].substring(0,2)){
+                          return Container(
+                            color: Colors.blue.withOpacity(0.5),
+                            width: gridCellSize,
+                            height: gridCellSize,
+                          );
+                        }
                       }
                     }()
                   ),
@@ -321,6 +327,7 @@ void updatePuzzle(chess.Chess position,List<String> initSolutions) {
 }
 
 
+bool showHint = false;
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -340,7 +347,6 @@ class _MyAppState extends State<MyApp> {
     SetUpThePuzzle(Solution,initialePos,initSolutions);
     double screenWidth = MediaQuery.of(context).size.width;
 
-    bool showHint = false;
 
     void HintButtonTriggered(){
       setState(() {
@@ -400,7 +406,7 @@ class _MyAppState extends State<MyApp> {
 
 
 class GameInfos extends StatefulWidget {
-  void Hint;
+  VoidCallback Hint;
   bool showOptions;
   GameInfos({required this.showOptions , required this.Hint});
 
@@ -417,7 +423,7 @@ class _GameInfosState extends State<GameInfos> {
 
 
   _callForHint(){
-    widget.Hint;
+    widget.Hint();
   }
 
 
